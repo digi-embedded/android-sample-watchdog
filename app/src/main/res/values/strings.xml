@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Watchdog Sample</string>
+    <string name="running">Hardware watchdog service is running!</string>
+    <string name="stopped">Hardware watchdog service is stopped.</string>
+    <string name="subscribed_hw">Application is subscribed to hardware watchdog service.</string>
+    <string name="subscribed_sw">Application is subscribed to software watchdog service.</string>
+    <string name="unsubscribed">Application is not subscribed to watchdog service.</string>
+    <string name="default_timeout">20</string>
+    <string name="default_interval">5000</string>
+    <string name="subscribe">Subscribe</string>
+    <string name="unsubscribe">Unsubscribe</string>
+    <string name="init_hw_wd">Init Hardware Watchdog</string>
+    <string name="hardware_watchdog">Hardware Watchdog</string>
+    <string name="software_watchdog">Software Watchdog</string>
+    <string name="seconds">seconds</string>
+    <string name="milliseconds">milliseconds</string>
+    <string name="timeout">Watchdog timeout: </string>
+    <string name="interval">Request interval: </string>
+    <string name="type">Watchdog type: </string>
+    <string name="report">Report status: </string>
+    <string name="service_subscription">Watchdog Service Subscription</string>
+    <string name="report_failure">Report Failure</string>
+    <string name="hardware_watchdog_service">Hardware Watchdog Service</string>
+    <string name="restart_application">Restart application (software watchdog)</string>
+    <string name="hardware_watchdog_service_title">Hardware Watchdog Service</string>
+    <string name="hardware_watchdog_service_description">The hardware watchdog service is used to detect system malfunctions and perform a reboot in that case. During normal operation, the hardware watchdog service regularly restarts the watchdog timer to prevent it from elapsing. If, due to a hardware or software error, the service is not able to update the hardware watchdog, the system will automatically reboot.\n\nApplications are also able to subscribe to the hardware watchdog service. If a subscribed application reports failure to the watchdog service, system will automatically reboot.</string>
+    <string name="watchdog_service_title">Watchdog Service Subscription</string>
+    <string name="watchdog_service_description">The watchdog service allows applications to subscribe to it in order to check application integrity in a time basis. Users can configure the time interval at which watchdog service will ask application for status. Additionally, the watchdog service offers two different subscription types:\n\n    - Hardware Watchdog\n    - Software watchdog\n\nCheck their meaning below.</string>
+    <string name="hardware_watchdog_title">Hardware Watchdog</string>
+    <string name="hardware_watchdog_description">When an application is subscribed to the hardware watchdog service, the device will reboot the system when malfunction is detected in the subscribed application</string>
+    <string name="software_watchdog_title">Software Watchdog</string>
+    <string name="software_watchdog_description">When an application is subscribed to the software watchdog service, the device will stop the subscribed application when malfunction is detected and the passed PendingIntent will be executed (if any).\n\nIn this case, the application will be restarted if the \'Restart application\' check box is selected.</string>
+</resources>
+
