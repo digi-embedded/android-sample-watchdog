@@ -1,4 +1,4 @@
-package com.example.android.watchdogsample;
+package com.digi.android.watchdogsample;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -432,7 +432,7 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 	/**
 	 * Displays a popup dialog with the given title and message.
 	 * 
-	 * @param title Pupup dialog title.
+	 * @param title Popup dialog title.
 	 * @param message Popup dialog message.
 	 */
 	private void showPopupDialog(String title, String message) {
