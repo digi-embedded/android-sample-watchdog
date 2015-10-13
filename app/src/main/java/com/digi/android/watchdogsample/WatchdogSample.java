@@ -1,3 +1,15 @@
+/**
+ * Copyright (c) 2014-2015 Digi International Inc.,
+ * All rights not expressly granted are reserved.
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343
+ * =======================================================================
+ */
+
 package com.digi.android.watchdogsample;
 
 import android.app.Activity;
@@ -19,6 +31,19 @@ import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+/**
+ * Watchdog sample application.
+ *
+ * <p>This example demonstrates the usage of the Watchdog API. This application allows
+ * the configuration of the hardware watchdog timeout and start it. Users can
+ * subscribe the application to the watchdog service choosing between the hardware
+ * watchdog or the software watchdog. Finally, users can report application
+ * failures to the watchdog service anytime using a button.</p>
+ *
+ * <p>For a complete description on the example, refer to the 'README.md' file
+ * included in the example directory.</p>
+ */
 
 public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 	
@@ -52,11 +77,7 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 	private TextView hardwareWatchdogStatusText;
 	private TextView subscribeStatusText;
 	private TextView reportFailureText;
-	
-	private ImageButton hardwareWatchdogServiceHelpButton;
-	private ImageButton watchdogServiceHelpButton;
-	private ImageButton hardwareWatchdogHelpButton;
-	private ImageButton softwareWatchdogHelpButton;
+
 	private ImageButton reportFailureButton;
 	
 	private WatchdogManager watchdogManager;
@@ -64,40 +85,36 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 	private boolean reportValue = true;
 	private boolean isSubscribed = false;
 	
-    /*
-     * (non-Javadoc)
-     * @see android.app.Activity#onCreate(android.os.Bundle)
-     */
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
-        // Retrieve Watchdog Manager service.
-        watchdogManager = (WatchdogManager)getSystemService(Context.WATCHDOG_SERVICE);
-        // Initialize UI.
-     	initializeUIComponents();
-    }
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
+		// Retrieve Watchdog Manager service.
+		watchdogManager = (WatchdogManager)getSystemService(Context.WATCHDOG_SERVICE);
+		// Initialize UI.
+	 	initializeUIComponents();
+	}
 
-    /*
-     * (non-Javadoc)
-     * @see android.app.Activity#onResume()
-     */
-    protected void onResume() {
-    	super.onResume();
-    	// Initialize watchdog service status.
-    	initWatchdogServiceStatus();
-    }
-    
-    /**
+	public boolean isApplicationAlive() {
+		Log.i(TAG, REQUEST_TEXT);
+		return reportValue;
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		// Initialize watchdog service status.
+		initWatchdogServiceStatus();
+	}
+	
+	/**
 	 * Initializes all the UI components and sets the corresponding event listeners.
 	 */
 	private void initializeUIComponents() {
 		// Initialize subscribe button.
 		subscribeButton = (Button)findViewById(R.id.subscribe_button);
 		subscribeButton.setOnClickListener(new OnClickListener() {
-			/*
-			 * (non-Javadoc)
-			 * @see android.view.View.OnClickListener#onClick(android.view.View)
-			 */
 			public void onClick(View v) {
 				handleSubscribeButtonPressed();
 			}
@@ -105,10 +122,6 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 		// Initialize unsubscribe button.
 		unsubscribeButton = (Button)findViewById(R.id.unsubscribe_button);
 		unsubscribeButton.setOnClickListener(new OnClickListener() {
-			/*
-			 * (non-Javadoc)
-			 * @see android.view.View.OnClickListener#onClick(android.view.View)
-			 */
 			public void onClick(View v) {
 				handleUnsubscribeButtonPressed();
 			}
@@ -116,10 +129,6 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 		// Initialize init hardware watchdog button.
 		initHardwareWatchdogButton = (Button)findViewById(R.id.init_hw_wd_button);
 		initHardwareWatchdogButton.setOnClickListener(new OnClickListener() {
-			/*
-			 * (non-Javadoc)
-			 * @see android.view.View.OnClickListener#onClick(android.view.View)
-			 */
 			public void onClick(View v) {
 				handleInitHardwareWatchdogButtonPressed();
 			}
@@ -127,10 +136,6 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 		// Initialize hardware watchdog radio button.
 		hardwareWatchdogRadioButton = (RadioButton)findViewById(R.id.hw_wd_radio_button);
 		hardwareWatchdogRadioButton.setOnClickListener(new OnClickListener() {
-			/*
-			 * (non-Javadoc)
-			 * @see android.view.View.OnClickListener#onClick(android.view.View)
-			 */
 			public void onClick(View v) {
 				handleHardwareWatchdogRadioButtonPressed();
 			}
@@ -138,65 +143,45 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 		// Initialize software watchdog radio button.
 		softwareWatchdogRadioButton = (RadioButton)findViewById(R.id.sw_wd_radio_button);
 		softwareWatchdogRadioButton.setOnClickListener(new OnClickListener() {
-			/*
-			 * (non-Javadoc)
-			 * @see android.view.View.OnClickListener#onClick(android.view.View)
-			 */
 			public void onClick(View v) {
 				handleSoftwareWatchdogRadioButtonPressed();
 			}
 		});
 		// Hardware Watchdog Help button.
-		hardwareWatchdogHelpButton = (ImageButton)findViewById(R.id.hw_wd_help_button);
+		ImageButton hardwareWatchdogHelpButton = (ImageButton) findViewById(R.id.hw_wd_help_button);
 		hardwareWatchdogHelpButton.setOnClickListener(new OnClickListener() {
-			/*
-			 * (non-Javadoc)
-			 * @see android.view.View.OnClickListener#onClick(android.view.View)
-			 */
 			public void onClick(View v) {
-				showPopupDialog(getStringResource(R.string.hardware_watchdog), getStringResource(R.string.hardware_watchdog_description));
+				showPopupDialog(getStringResource(R.string.hardware_watchdog), 
+						getStringResource(R.string.hardware_watchdog_description));
 			}
 		});
 		// Software Watchdog Help button.
-		softwareWatchdogHelpButton = (ImageButton)findViewById(R.id.sw_wd_help_button);
+		ImageButton softwareWatchdogHelpButton = (ImageButton) findViewById(R.id.sw_wd_help_button);
 		softwareWatchdogHelpButton.setOnClickListener(new OnClickListener() {
-			/*
-			 * (non-Javadoc)
-			 * @see android.view.View.OnClickListener#onClick(android.view.View)
-			 */
 			public void onClick(View v) {
-				showPopupDialog(getStringResource(R.string.software_watchdog), getStringResource(R.string.software_watchdog_description));
+				showPopupDialog(getStringResource(R.string.software_watchdog), 
+						getStringResource(R.string.software_watchdog_description));
 			}
 		});
 		// Hardware watchdog service Help button.
-		hardwareWatchdogServiceHelpButton = (ImageButton)findViewById(R.id.hw_wd_service_help_button);
+		ImageButton hardwareWatchdogServiceHelpButton = (ImageButton) findViewById(R.id.hw_wd_service_help_button);
 		hardwareWatchdogServiceHelpButton.setOnClickListener(new OnClickListener() {
-			/*
-			 * (non-Javadoc)
-			 * @see android.view.View.OnClickListener#onClick(android.view.View)
-			 */
 			public void onClick(View v) {
-				showPopupDialog(getStringResource(R.string.hardware_watchdog_service_title), getStringResource(R.string.hardware_watchdog_service_description));
+				showPopupDialog(getStringResource(R.string.hardware_watchdog_service_title), 
+						getStringResource(R.string.hardware_watchdog_service_description));
 			}
 		});
 		// Watchdog service Help button.
-		watchdogServiceHelpButton = (ImageButton)findViewById(R.id.watchdog_service_help_button);
+		ImageButton watchdogServiceHelpButton = (ImageButton) findViewById(R.id.watchdog_service_help_button);
 		watchdogServiceHelpButton.setOnClickListener(new OnClickListener() {
-			/*
-			 * (non-Javadoc)
-			 * @see android.view.View.OnClickListener#onClick(android.view.View)
-			 */
 			public void onClick(View v) {
-				showPopupDialog(getStringResource(R.string.watchdog_service_title), getStringResource(R.string.watchdog_service_description));
+				showPopupDialog(getStringResource(R.string.watchdog_service_title), 
+						getStringResource(R.string.watchdog_service_description));
 			}
 		});
 		// Report failure button.
 		reportFailureButton = (ImageButton)findViewById(R.id.report_failure_button);
 		reportFailureButton.setOnClickListener(new OnClickListener() {
-			/*
-			 * (non-Javadoc)
-			 * @see android.view.View.OnClickListener#onClick(android.view.View)
-			 */
 			public void onClick(View v) {
 				handleReportFailureButtonPressed();
 			}
@@ -214,7 +199,7 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 		// Report Failure text.
 		reportFailureText = (TextView)findViewById(R.id.report_failure_text);
 	}
-    
+	
 	/**
 	 * Initializes the status of the watchdog service after application starts.
 	 */
@@ -222,7 +207,7 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 		if (watchdogManager.isHardwareWatchdogRunning()) {
 			enableHardwareWatchdogControls(false);
 			setHardwareWatchdogStatus(true);
-			timeoutText.setText("" + watchdogManager.getHardwareWatchdogTimeout());
+			timeoutText.setText(String.valueOf(watchdogManager.getHardwareWatchdogTimeout()));
 		} else {
 			enableHardwareWatchdogControls(true);
 			setHardwareWatchdogStatus(false);
@@ -273,16 +258,16 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 		try {
 			int timeout = Integer.valueOf(timeoutText.getText().toString());
 			boolean success = watchdogManager.initHardwareWatchdog(timeout);
-	        if (!success)
-	        	showToast(ERROR_INITIALIZE + CHECK_LOGCAT_MESSAGE);
-	        else {
-	        	int configuredTimeout = watchdogManager.getHardwareWatchdogTimeout();
-	        	showToast("Configured Hardware Watchdog timeout is " + configuredTimeout + " seconds.");
-	        	setHardwareWatchdogStatus(true);
-	        	enableHardwareWatchdogControls(false);
-	        	if (configuredTimeout != timeout)
-	        		timeoutText.setText("" + configuredTimeout);
-	        }
+			if (!success)
+				showToast(ERROR_INITIALIZE + CHECK_LOGCAT_MESSAGE);
+			else {
+				int configuredTimeout = watchdogManager.getHardwareWatchdogTimeout();
+				showToast("Configured Hardware Watchdog timeout is " + configuredTimeout + " seconds.");
+				setHardwareWatchdogStatus(true);
+				enableHardwareWatchdogControls(false);
+				if (configuredTimeout != timeout)
+					timeoutText.setText(String.valueOf(configuredTimeout));
+			}
 		} catch (NumberFormatException e) {
 			showToast(ERROR_INVALID_TIMEOUT + " > " + timeoutText.getText().toString());
 		} catch (Exception e) {
@@ -473,8 +458,7 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 		Intent intent = new Intent(this, WatchdogSample.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		// Build pending intent.
-		PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
-		return pi;
+		return PendingIntent.getActivity(this, 0, intent, 0);
 	}
 	
 	/**
@@ -485,14 +469,5 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 	 */
 	private String getStringResource(int resourceId) {
 		return getResources().getString(resourceId);
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see android.watchdog.WatchdogStatusCallback#isApplicationAlive()
-	 */
-	public boolean isApplicationAlive() {
-		Log.i(TAG, REQUEST_TEXT);
-		return reportValue;
 	}
 }

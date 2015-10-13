@@ -28,7 +28,7 @@
     <string name="watchdog_service_title">Watchdog Service Subscription</string>
     <string name="watchdog_service_description">The watchdog service allows applications to subscribe to it in order to check application integrity in a time basis. Users can configure the time interval at which watchdog service will ask application for status. Additionally, the watchdog service offers two different subscription types:\n\n    - Hardware Watchdog\n    - Software watchdog\n\nCheck their meaning below.</string>
     <string name="hardware_watchdog_title">Hardware Watchdog</string>
-    <string name="hardware_watchdog_description">When an application is subscribed to the hardware watchdog service, the device will reboot the system when malfunction is detected in the subscribed application</string>
+    <string name="hardware_watchdog_description">When an application is subscribed to the hardware watchdog service, the device will reboot the system when malfunction is detected in the subscribed application.</string>
     <string name="software_watchdog_title">Software Watchdog</string>
     <string name="software_watchdog_description">When an application is subscribed to the software watchdog service, the device will stop the subscribed application when malfunction is detected and the passed PendingIntent will be executed (if any).\n\nIn this case, the application will be restarted if the \'Restart application\' check box is selected.</string>
 </resources>

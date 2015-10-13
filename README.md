@@ -13,7 +13,7 @@ Demo requirements
 To run this example you need:
 
 * One compatible device to host the application.
-* Network connection between the device and the host PC in order to transfer and
+* A USB connection between the device and the host PC in order to transfer and
   launch the application.
 * Establish remote target connection to your Digi hardware before running this
   application.
@@ -24,8 +24,7 @@ Demo setup
 Make sure the hardware is set up correctly:
 
 1. The device is powered on.
-2. The device is connected directly to the PC or to the Local Area Network (LAN)
-   by the Ethernet cable.
+2. The device is connected directly to the PC by the micro USB cable.
 
 Demo run
 --------
@@ -64,8 +63,17 @@ Click **Unsubscribe** to unsubscribe application from watchdog service anytime.
 Finally, click on any question mark near each section to obtain more information
 regarding the watchdog service.
 
-Tested on
----------
+Compatible with
+---------------
 
 * ConnectCore 6 SBC
-* ConenctCore 6 SBC v2
+* ConnectCore 6 SBC v2
+
+License
+-------
+
+This software is open-source software. Copyright Digi International, 2014-2015.
+
+This Source Code Form is subject to the terms of the Mozilla Public License,
+v. 2.0. If a copy of the MPL was not distributed with this file, you can obtain
+one at http://mozilla.org/MPL/2.0/.
