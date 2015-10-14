@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
 	android:layout_margin="10dip"
 	android:background="@drawable/border"
 	android:padding="20dip"
@@ -29,7 +29,7 @@
 
 	<LinearLayout
 		android:id="@+id/linearLayout1"
-		android:layout_width="fill_parent"
+		android:layout_width="match_parent"
 		android:layout_height="1dip"
 		android:layout_below="@+id/textView1"
 		android:layout_marginTop="3dip"
@@ -65,7 +65,8 @@
 		android:layout_marginTop="3dip"
 		android:ems="10"
 		android:inputType="number"
-		android:text="@string/default_timeout" />
+		android:text="@string/default_timeout"
+		android:textColor="@drawable/edittext"/>
 	
 	<TextView
 		android:id="@+id/textView3"
@@ -83,7 +84,8 @@
 		android:layout_height="wrap_content"
 		android:layout_below="@+id/timeout_text"
 		android:layout_marginTop="5dip"
-		android:text="@string/init_hw_wd" />
+		android:text="@string/init_hw_wd"
+		/>
 	
 	<TextView
 		android:id="@+id/textView4"
@@ -108,7 +110,7 @@
 	
 	<LinearLayout
 		android:id="@+id/linearLayout2"
-		android:layout_width="fill_parent"
+		android:layout_width="match_parent"
 		android:layout_height="1dip"
 		android:layout_below="@+id/textView4"
 		android:layout_marginTop="3dip"
@@ -142,7 +144,8 @@
 		android:layout_marginTop="3dip"
 		android:ems="10"
 		android:inputType="number"
-		android:text="@string/default_interval" />
+		android:text="@string/default_interval"
+		android:textColor="@drawable/edittext"/>
 	
 	<TextView
 		android:id="@+id/textView6"

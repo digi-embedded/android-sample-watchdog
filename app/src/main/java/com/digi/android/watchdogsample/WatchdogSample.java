@@ -115,6 +115,7 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 		// Initialize subscribe button.
 		subscribeButton = (Button)findViewById(R.id.subscribe_button);
 		subscribeButton.setOnClickListener(new OnClickListener() {
+			@Override
 			public void onClick(View v) {
 				handleSubscribeButtonPressed();
 			}
@@ -122,6 +123,7 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 		// Initialize unsubscribe button.
 		unsubscribeButton = (Button)findViewById(R.id.unsubscribe_button);
 		unsubscribeButton.setOnClickListener(new OnClickListener() {
+			@Override
 			public void onClick(View v) {
 				handleUnsubscribeButtonPressed();
 			}
@@ -129,6 +131,7 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 		// Initialize init hardware watchdog button.
 		initHardwareWatchdogButton = (Button)findViewById(R.id.init_hw_wd_button);
 		initHardwareWatchdogButton.setOnClickListener(new OnClickListener() {
+			@Override
 			public void onClick(View v) {
 				handleInitHardwareWatchdogButtonPressed();
 			}
@@ -136,6 +139,7 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 		// Initialize hardware watchdog radio button.
 		hardwareWatchdogRadioButton = (RadioButton)findViewById(R.id.hw_wd_radio_button);
 		hardwareWatchdogRadioButton.setOnClickListener(new OnClickListener() {
+			@Override
 			public void onClick(View v) {
 				handleHardwareWatchdogRadioButtonPressed();
 			}
@@ -143,6 +147,7 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 		// Initialize software watchdog radio button.
 		softwareWatchdogRadioButton = (RadioButton)findViewById(R.id.sw_wd_radio_button);
 		softwareWatchdogRadioButton.setOnClickListener(new OnClickListener() {
+			@Override
 			public void onClick(View v) {
 				handleSoftwareWatchdogRadioButtonPressed();
 			}
@@ -150,6 +155,7 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 		// Hardware Watchdog Help button.
 		ImageButton hardwareWatchdogHelpButton = (ImageButton) findViewById(R.id.hw_wd_help_button);
 		hardwareWatchdogHelpButton.setOnClickListener(new OnClickListener() {
+			@Override
 			public void onClick(View v) {
 				showPopupDialog(getStringResource(R.string.hardware_watchdog), 
 						getStringResource(R.string.hardware_watchdog_description));
@@ -158,6 +164,7 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 		// Software Watchdog Help button.
 		ImageButton softwareWatchdogHelpButton = (ImageButton) findViewById(R.id.sw_wd_help_button);
 		softwareWatchdogHelpButton.setOnClickListener(new OnClickListener() {
+			@Override
 			public void onClick(View v) {
 				showPopupDialog(getStringResource(R.string.software_watchdog), 
 						getStringResource(R.string.software_watchdog_description));
@@ -166,6 +173,7 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 		// Hardware watchdog service Help button.
 		ImageButton hardwareWatchdogServiceHelpButton = (ImageButton) findViewById(R.id.hw_wd_service_help_button);
 		hardwareWatchdogServiceHelpButton.setOnClickListener(new OnClickListener() {
+			@Override
 			public void onClick(View v) {
 				showPopupDialog(getStringResource(R.string.hardware_watchdog_service_title), 
 						getStringResource(R.string.hardware_watchdog_service_description));
@@ -174,6 +182,7 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 		// Watchdog service Help button.
 		ImageButton watchdogServiceHelpButton = (ImageButton) findViewById(R.id.watchdog_service_help_button);
 		watchdogServiceHelpButton.setOnClickListener(new OnClickListener() {
+			@Override
 			public void onClick(View v) {
 				showPopupDialog(getStringResource(R.string.watchdog_service_title), 
 						getStringResource(R.string.watchdog_service_description));
@@ -182,6 +191,7 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 		// Report failure button.
 		reportFailureButton = (ImageButton)findViewById(R.id.report_failure_button);
 		reportFailureButton.setOnClickListener(new OnClickListener() {
+			@Override
 			public void onClick(View v) {
 				handleReportFailureButtonPressed();
 			}
@@ -204,14 +214,13 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 	 * Initializes the status of the watchdog service after application starts.
 	 */
 	private void initWatchdogServiceStatus() {
-		if (watchdogManager.isHardwareWatchdogRunning()) {
-			enableHardwareWatchdogControls(false);
-			setHardwareWatchdogStatus(true);
+		boolean hwWatchdogRunning = watchdogManager.isHardwareWatchdogRunning();
+		enableHardwareWatchdogControls(!hwWatchdogRunning);
+		setHardwareWatchdogStatus(hwWatchdogRunning);
+
+		if (hwWatchdogRunning)
 			timeoutText.setText(String.valueOf(watchdogManager.getHardwareWatchdogTimeout()));
-		} else {
-			enableHardwareWatchdogControls(true);
-			setHardwareWatchdogStatus(false);
-		}
+
 		enableSubscribeControls(!isSubscribed);
 		setSubscribedStatus(isSubscribed);
 		enableReportFailureControls(isSubscribed);
@@ -226,7 +235,7 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 			if (restartApplicationButton.isChecked())
 				watchdogManager.subscribeApplication(this, getSelectedWatchdogType(), interval, this, generatePendingIntent());
 			else
-				watchdogManager.subscribeApplication(this, getSelectedWatchdogType(), interval, this);	
+				watchdogManager.subscribeApplication(this, getSelectedWatchdogType(), interval, this);
 			isSubscribed = true;
 			enableSubscribeControls(false);
 			setSubscribedStatus(true);
@@ -280,26 +289,18 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 	 * Handles what happens when the hardware watchdog radio button is pressed.
 	 */
 	private void handleHardwareWatchdogRadioButtonPressed() {
-		if (hardwareWatchdogRadioButton.isChecked()) {
-			softwareWatchdogRadioButton.setChecked(false);
-			restartApplicationButton.setEnabled(false);
-		} else {
-			softwareWatchdogRadioButton.setChecked(true);
-			restartApplicationButton.setEnabled(true);
-		}
+		boolean hwWatchdog = hardwareWatchdogRadioButton.isChecked();
+		softwareWatchdogRadioButton.setChecked(!hwWatchdog);
+		restartApplicationButton.setEnabled(!hwWatchdog);
 	}
 	
 	/**
 	 * Handles what happens when the software watchdog radio button is pressed.
 	 */
 	private void handleSoftwareWatchdogRadioButtonPressed() {
-		if (softwareWatchdogRadioButton.isChecked()) {
-			hardwareWatchdogRadioButton.setChecked(false);
-			restartApplicationButton.setEnabled(true);
-		} else {
-			hardwareWatchdogRadioButton.setChecked(true);
-			restartApplicationButton.setEnabled(false);
-		}
+		boolean softWatchdog = softwareWatchdogRadioButton.isChecked();
+		hardwareWatchdogRadioButton.setChecked(!softWatchdog);
+		restartApplicationButton.setEnabled(softWatchdog);
 	}
 	
 	/**
@@ -379,13 +380,9 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 		unsubscribeButton.setEnabled(!enable);
 		hardwareWatchdogRadioButton.setEnabled(enable);
 		softwareWatchdogRadioButton.setEnabled(enable);
-		if (enable) {
-			if (getSelectedWatchdogType() == WatchdogManager.WATCHDOG_SOFTWARE)
-				restartApplicationButton.setEnabled(true);
-			else
-				restartApplicationButton.setEnabled(false);
-		} else
-			restartApplicationButton.setEnabled(false);
+
+		boolean swWatchdogSelected = getSelectedWatchdogType() == WatchdogManager.WATCHDOG_SOFTWARE;
+		restartApplicationButton.setEnabled(enable && swWatchdogSelected);
 	}
 	
 	/**
@@ -398,7 +395,6 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 		if (enable) {
 			reportFailureText.setTextColor(getResources().getColor(R.color.white));
 			reportFailureButton.setImageDrawable(getResources().getDrawable(R.drawable.failure_image));
-			
 		} else {
 			reportFailureText.setTextColor(getResources().getColor(R.color.light_grey));
 			reportFailureButton.setImageDrawable(getResources().getDrawable(R.drawable.failure_image_disabled));
@@ -426,6 +422,7 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 		alertDialog.setMessage(message);
 		alertDialog.setCancelable(true);
 		alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				alertDialog.dismiss();
 			}
