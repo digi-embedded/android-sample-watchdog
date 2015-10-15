@@ -10,7 +10,7 @@
  * =======================================================================
  */
 
-package com.digi.android.watchdogsample;
+package com.digi.android.watchdog;
 
 import android.app.Activity;
 import android.app.AlertDialog;

@@ -15,8 +15,6 @@ To run this example you need:
 * One compatible device to host the application.
 * A USB connection between the device and the host PC in order to transfer and
   launch the application.
-* Establish remote target connection to your Digi hardware before running this
-  application.
 
 Demo setup
 ----------
