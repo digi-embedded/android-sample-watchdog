@@ -15,7 +15,6 @@ package com.digi.android.watchdog;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,6 +23,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.watchdog.WatchdogManager;
 import android.watchdog.WatchdogStatusCallback;
+import android.watchdog.WatchdogType;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -91,7 +91,7 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		// Retrieve Watchdog Manager service.
-		watchdogManager = (WatchdogManager)getSystemService(Context.WATCHDOG_SERVICE);
+		watchdogManager = (WatchdogManager) getSystemService(WATCHDOG_SERVICE);
 		// Initialize UI.
 	 	initializeUIComponents();
 	}
@@ -311,13 +311,13 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 		unsubscribeButton.setEnabled(false);
 		reportValue = false;
 		switch (getSelectedWatchdogType()) {
-		case WatchdogManager.WATCHDOG_HARDWARE:
-			showToast(SYSTEM_REBOOT_MESSAGE.replace(TAG_TIMEOUT, timeoutText.getText().toString()));
-			break;
-		case WatchdogManager.WATCHDOG_SOFTWARE:
-		default:
-			showToast(APPLICATION_SHUT_DOWN_MESSAGE);
-			break;
+			case HARDWARE:
+				showToast(SYSTEM_REBOOT_MESSAGE.replace(TAG_TIMEOUT, timeoutText.getText().toString()));
+				break;
+			case SOFTWARE:
+			default:
+				showToast(APPLICATION_SHUT_DOWN_MESSAGE);
+				break;
 		}
 	}
 	
@@ -329,13 +329,13 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 	private void setSubscribedStatus(boolean subscribed) {
 		if (subscribed) {
 			switch (getSelectedWatchdogType()) {
-			case WatchdogManager.WATCHDOG_HARDWARE:
-				subscribeStatusText.setText(R.string.subscribed_hw);
-				break;
-			case WatchdogManager.WATCHDOG_SOFTWARE:
-			default:
-				subscribeStatusText.setText(R.string.subscribed_sw);
-				break;
+				case HARDWARE:
+					subscribeStatusText.setText(R.string.subscribed_hw);
+					break;
+				case SOFTWARE:
+				default:
+					subscribeStatusText.setText(R.string.subscribed_sw);
+					break;
 			}
 			subscribeStatusText.setTextColor(getResources().getColor(R.color.light_green));
 		} else {
@@ -381,7 +381,7 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 		hardwareWatchdogRadioButton.setEnabled(enable);
 		softwareWatchdogRadioButton.setEnabled(enable);
 
-		boolean swWatchdogSelected = getSelectedWatchdogType() == WatchdogManager.WATCHDOG_SOFTWARE;
+		boolean swWatchdogSelected = getSelectedWatchdogType() == WatchdogType.SOFTWARE;
 		restartApplicationButton.setEnabled(enable && swWatchdogSelected);
 	}
 	
@@ -437,11 +437,11 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 	 * 
 	 * @return The selected watchdog type.
 	 */
-	private int getSelectedWatchdogType() {
+	private WatchdogType getSelectedWatchdogType() {
 		if (hardwareWatchdogRadioButton.isChecked())
-			return WatchdogManager.WATCHDOG_HARDWARE;
+			return WatchdogType.HARDWARE;
 		else
-			return WatchdogManager.WATCHDOG_SOFTWARE;
+			return WatchdogType.SOFTWARE;
 	}
 	
 	/**
