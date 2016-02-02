@@ -22,12 +22,9 @@ import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.watchdog.WatchdogManager;
-import android.watchdog.WatchdogStatusCallback;
-import android.watchdog.WatchdogType;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -39,56 +36,44 @@ import android.widget.Toast;
 /**
  * Watchdog sample application.
  *
- * <p>This example demonstrates the usage of the Watchdog API. This application allows
- * the configuration of the hardware watchdog timeout and start it. Users can
- * subscribe the application to the watchdog service choosing between the hardware
- * watchdog or the software watchdog. Finally, users can report application
- * failures to the watchdog service anytime using a button.</p>
+ * <p>This example demonstrates the usage of the Watchdog API. The application allows users to
+ * register to the watchdog service choosing between the system watchdog or the application
+ * watchdog services. Finally, users can force application failures anytime using a button.</p>
  *
  * <p>For a complete description on the example, refer to the 'README.md' file
  * included in the example directory.</p>
  */
 
-public class WatchdogSample extends Activity implements WatchdogStatusCallback {
+public class WatchdogSample extends Activity {
 	
 	// Constants.
-	private final static String TAG = "WatchdogSample";
-	private final static String REQUEST_TEXT = "Watchdog service requested application status.";
-	private final static String TAG_TIMEOUT = "%%TIMEOUT%%";
+	private final static String TAG_TIMEOUT = "@@TIMEOUT@@";
 	private final static String ERROR_INVALID_TIMEOUT = "ERROR: Invalid timeout.";
-	private final static String ERROR_INVALID_INTERVAL = "ERROR: Invalid interval.";
-	private final static String ERROR_SUBSCRIBING = "ERROR: Could not subscribe to watchdog service > ";
-	private final static String ERROR_INITIALIZE = "ERROR: Could not initialize hardware watchdog service > ";
-	private final static String CHECK_LOGCAT_MESSAGE = "Check logcat for more information.";
-	private final static String SYSTEM_REBOOT_MESSAGE = "Application will report failure in the next request, system will reboot in " +
-			"about " + TAG_TIMEOUT + " seconds...";
-	private final static String APPLICATION_SHUT_DOWN_MESSAGE = "Application will report failure in the next request and system will " +
-			"stop the application";
+	private final static String ERROR_REGISTERING = "ERROR: Could not register to watchdog service > ";
+	private final static String SYSTEM_REBOOT_MESSAGE = "Application will stop refreshing the watchdog now. System will reboot in " +
+			"less than " + TAG_TIMEOUT + " milliseconds...";
+	private final static String APPLICATION_SHUT_DOWN_MESSAGE = "Application will stop refreshing the watchdog now. System will " +
+			"stop the application in less than " + TAG_TIMEOUT + " milliseconds...";
 	
 	// Variables.
-	private Button subscribeButton;
-	private Button unsubscribeButton;
-	private Button initHardwareWatchdogButton;
+	private Button registerButton;
+	private Button unregisterButton;
 	
-	private RadioButton hardwareWatchdogRadioButton;
-	private RadioButton softwareWatchdogRadioButton;
+	private RadioButton systemWatchdogRadioButton;
+	private RadioButton applicationWatchdogRadioButton;
 	
 	private CheckBox restartApplicationButton;
-	
-	private EditText intervalText;
+
 	private EditText timeoutText;
 
-	private TextView hardwareWatchdogStatusText;
-	private TextView subscribeStatusText;
+	private TextView registerStatusText;
 	private TextView reportFailureText;
 
 	private ImageButton reportFailureButton;
 	
 	private WatchdogManager watchdogManager;
-	
-	private boolean reportValue = true;
-	private boolean isSubscribed = false;
-	
+
+	private boolean running = false;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -98,98 +83,69 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 		watchdogManager = (WatchdogManager) getSystemService(WATCHDOG_SERVICE);
 		// Initialize UI.
 	 	initializeUIComponents();
-	}
-
-	public boolean isApplicationAlive() {
-		Log.i(TAG, REQUEST_TEXT);
-		return reportValue;
+		// Enable controls.
+		enableRegisterControls(true);
+		enableReportFailureControls(false);
 	}
 
 	@Override
-	protected void onResume() {
-		super.onResume();
-		// Initialize watchdog service status.
-		initWatchdogServiceStatus();
+	protected void onStop() {
+		super.onStop();
+		running = false;
 	}
-	
+
 	/**
 	 * Initializes all the UI components and sets the corresponding event listeners.
 	 */
 	private void initializeUIComponents() {
 		// Initialize subscribe button.
-		subscribeButton = (Button)findViewById(R.id.subscribe_button);
-		subscribeButton.setOnClickListener(new OnClickListener() {
+		registerButton = (Button)findViewById(R.id.register_button);
+		registerButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				handleSubscribeButtonPressed();
+				handleRegisterButtonPressed();
 			}
 		});
-		// Initialize unsubscribe button.
-		unsubscribeButton = (Button)findViewById(R.id.unsubscribe_button);
-		unsubscribeButton.setOnClickListener(new OnClickListener() {
+		// Initialize unregister button.
+		unregisterButton = (Button)findViewById(R.id.unregister_button);
+		unregisterButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				handleUnsubscribeButtonPressed();
+				handleUnregisterButtonPressed();
 			}
 		});
-		// Initialize init hardware watchdog button.
-		initHardwareWatchdogButton = (Button)findViewById(R.id.init_hw_wd_button);
-		initHardwareWatchdogButton.setOnClickListener(new OnClickListener() {
+		// Initialize system watchdog radio button.
+		systemWatchdogRadioButton = (RadioButton)findViewById(R.id.system_wd_radio_button);
+		systemWatchdogRadioButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				handleInitHardwareWatchdogButtonPressed();
+				handleSystemWatchdogRadioButtonPressed();
 			}
 		});
-		// Initialize hardware watchdog radio button.
-		hardwareWatchdogRadioButton = (RadioButton)findViewById(R.id.hw_wd_radio_button);
-		hardwareWatchdogRadioButton.setOnClickListener(new OnClickListener() {
+		// Initialize application watchdog radio button.
+		applicationWatchdogRadioButton = (RadioButton)findViewById(R.id.application_wd_radio_button);
+		applicationWatchdogRadioButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				handleHardwareWatchdogRadioButtonPressed();
+				handleApplicationWatchdogRadioButtonPressed();
 			}
 		});
-		// Initialize software watchdog radio button.
-		softwareWatchdogRadioButton = (RadioButton)findViewById(R.id.sw_wd_radio_button);
-		softwareWatchdogRadioButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				handleSoftwareWatchdogRadioButtonPressed();
-			}
-		});
-		// Hardware Watchdog Help button.
-		ImageButton hardwareWatchdogHelpButton = (ImageButton) findViewById(R.id.hw_wd_help_button);
+		// System Watchdog Help button.
+		ImageButton hardwareWatchdogHelpButton = (ImageButton) findViewById(R.id.system_wd_help_button);
 		hardwareWatchdogHelpButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				showPopupDialog(getStringResource(R.string.hardware_watchdog), 
-						getStringResource(R.string.hardware_watchdog_description));
+				showPopupDialog(getStringResource(R.string.system_watchdog_service),
+						getStringResource(R.string.system_watchdog_description));
 			}
 		});
-		// Software Watchdog Help button.
-		ImageButton softwareWatchdogHelpButton = (ImageButton) findViewById(R.id.sw_wd_help_button);
+		// Application Watchdog Help button.
+		ImageButton softwareWatchdogHelpButton = (ImageButton) findViewById(R.id.application_wd_help_button);
 		softwareWatchdogHelpButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				showPopupDialog(getStringResource(R.string.software_watchdog), 
-						getStringResource(R.string.software_watchdog_description));
-			}
-		});
-		// Hardware watchdog service Help button.
-		ImageButton hardwareWatchdogServiceHelpButton = (ImageButton) findViewById(R.id.hw_wd_service_help_button);
-		hardwareWatchdogServiceHelpButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				showPopupDialog(getStringResource(R.string.hardware_watchdog_service_title), 
-						getStringResource(R.string.hardware_watchdog_service_description));
-			}
-		});
-		// Watchdog service Help button.
-		ImageButton watchdogServiceHelpButton = (ImageButton) findViewById(R.id.watchdog_service_help_button);
-		watchdogServiceHelpButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				showPopupDialog(getStringResource(R.string.watchdog_service_title), 
-						getStringResource(R.string.watchdog_service_description));
+				showPopupDialog(getStringResource(R.string.application_watchdog_service),
+						getStringResource(R.string.application_watchdog_description));
 			}
 		});
 		// Report failure button.
@@ -202,109 +158,71 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 		});
 		// Initialize restart application check box.
 		restartApplicationButton = (CheckBox)findViewById(R.id.restart_application_button);
-		// Initialize time interval text.
-		intervalText = (EditText)findViewById(R.id.interval_text);
 		// Initialize timeout text.
 		timeoutText = (EditText)findViewById(R.id.timeout_text);
-		// Initialize subscription status text.
-		subscribeStatusText = (TextView)findViewById(R.id.subscribe_status_text);
-		// Initialize hardware watchdog status text.
-		hardwareWatchdogStatusText = (TextView)findViewById(R.id.hw_wd_status_text);
+		// Initialize registered status text.
+		registerStatusText = (TextView)findViewById(R.id.register_status_text);
 		// Report Failure text.
 		reportFailureText = (TextView)findViewById(R.id.report_failure_text);
 	}
 	
 	/**
-	 * Initializes the status of the watchdog service after application starts.
-	 */
-	private void initWatchdogServiceStatus() {
-		boolean hwWatchdogRunning = watchdogManager.isHardwareWatchdogRunning();
-		enableHardwareWatchdogControls(!hwWatchdogRunning);
-		setHardwareWatchdogStatus(hwWatchdogRunning);
-
-		if (hwWatchdogRunning)
-			timeoutText.setText(String.valueOf(watchdogManager.getHardwareWatchdogTimeout()));
-
-		enableSubscribeControls(!isSubscribed);
-		setSubscribedStatus(isSubscribed);
-		enableReportFailureControls(isSubscribed);
-	}
-	
-	/**
 	 * Handles what happens when the subscribe button is pressed.
 	 */
-	private void handleSubscribeButtonPressed() {
+	private void handleRegisterButtonPressed() {
 		try {
-			long interval = Long.valueOf(intervalText.getText().toString());
-			if (restartApplicationButton.isChecked())
-				watchdogManager.subscribeApplication(this, getSelectedWatchdogType(), interval, this, generatePendingIntent());
-			else
-				watchdogManager.subscribeApplication(this, getSelectedWatchdogType(), interval, this);
-			isSubscribed = true;
-			enableSubscribeControls(false);
-			setSubscribedStatus(true);
-			enableReportFailureControls(true);
-			reportValue = true;
-		} catch (NumberFormatException e) {
-			showToast(ERROR_INVALID_INTERVAL + " > " + intervalText.getText().toString());
-		} catch (Exception e) {
-			showToast(ERROR_SUBSCRIBING + e.getMessage());
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Handles what happens when the unsubscribe button is pressed.
-	 */
-	private void handleUnsubscribeButtonPressed() {
-		watchdogManager.unsubscribeApplication(this);
-		isSubscribed = false;
-		enableSubscribeControls(true);
-		setSubscribedStatus(false);
-		enableReportFailureControls(false);
-	}
-
-	/**
-	 * Handles what happens when the init hardware watchdog button is pressed.
-	 */
-	private void handleInitHardwareWatchdogButtonPressed() {
-		try {
-			int timeout = Integer.valueOf(timeoutText.getText().toString());
-			boolean success = watchdogManager.initHardwareWatchdog(timeout);
-			if (!success)
-				showToast(ERROR_INITIALIZE + CHECK_LOGCAT_MESSAGE);
-			else {
-				int configuredTimeout = watchdogManager.getHardwareWatchdogTimeout();
-				showToast("Configured Hardware Watchdog timeout is " + configuredTimeout + " seconds.");
-				setHardwareWatchdogStatus(true);
-				enableHardwareWatchdogControls(false);
-				if (configuredTimeout != timeout)
-					timeoutText.setText(String.valueOf(configuredTimeout));
+			long timeout = Long.valueOf(timeoutText.getText().toString());
+			long realTimeout;
+			if (applicationWatchdogRadioButton.isChecked()) {
+				if (restartApplicationButton.isChecked())
+					watchdogManager.registerApplication(this, timeout, generatePendingIntent());
+				else
+					watchdogManager.registerApplication(this, timeout, null);
+				realTimeout = timeout;
+				showToast("Registered to application watchdog with a timeout of " + realTimeout + " milliseconds.");
+			} else {
+				realTimeout = watchdogManager.initSystemWatchdog(timeout);
+				showToast("Registered to system watchdog with a timeout of " + realTimeout + " milliseconds.");
 			}
+			startRefreshThread(systemWatchdogRadioButton.isChecked(), realTimeout);
+			enableRegisterControls(false);
+			setRegisteredStatus(true);
+			enableReportFailureControls(true);
 		} catch (NumberFormatException e) {
 			showToast(ERROR_INVALID_TIMEOUT + " > " + timeoutText.getText().toString());
 		} catch (Exception e) {
-			showToast(ERROR_INITIALIZE + e.getMessage());
+			showToast(ERROR_REGISTERING + e.getMessage());
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
-	 * Handles what happens when the hardware watchdog radio button is pressed.
+	 * Handles what happens when the unregister button is pressed.
 	 */
-	private void handleHardwareWatchdogRadioButtonPressed() {
-		boolean hwWatchdog = hardwareWatchdogRadioButton.isChecked();
-		softwareWatchdogRadioButton.setChecked(!hwWatchdog);
-		restartApplicationButton.setEnabled(!hwWatchdog);
+	private void handleUnregisterButtonPressed() {
+		watchdogManager.unregisterApplication(this);
+		running = false;
+		enableRegisterControls(true);
+		setRegisteredStatus(false);
+		enableReportFailureControls(false);
 	}
 	
 	/**
-	 * Handles what happens when the software watchdog radio button is pressed.
+	 * Handles what happens when the system watchdog service radio button is pressed.
 	 */
-	private void handleSoftwareWatchdogRadioButtonPressed() {
-		boolean softWatchdog = softwareWatchdogRadioButton.isChecked();
-		hardwareWatchdogRadioButton.setChecked(!softWatchdog);
-		restartApplicationButton.setEnabled(softWatchdog);
+	private void handleSystemWatchdogRadioButtonPressed() {
+		boolean systemWatchdog = systemWatchdogRadioButton.isChecked();
+		applicationWatchdogRadioButton.setChecked(!systemWatchdog);
+		restartApplicationButton.setEnabled(!systemWatchdog);
+	}
+	
+	/**
+	 * Handles what happens when the applications watchdog service radio button is pressed.
+	 */
+	private void handleApplicationWatchdogRadioButtonPressed() {
+		boolean applicationWatchdog = applicationWatchdogRadioButton.isChecked();
+		systemWatchdogRadioButton.setChecked(!applicationWatchdog);
+		restartApplicationButton.setEnabled(applicationWatchdog);
 	}
 	
 	/**
@@ -312,81 +230,47 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 	 */
 	private void handleReportFailureButtonPressed() {
 		enableReportFailureControls(false);
-		unsubscribeButton.setEnabled(false);
-		reportValue = false;
-		switch (getSelectedWatchdogType()) {
-			case HARDWARE:
-				showToast(SYSTEM_REBOOT_MESSAGE.replace(TAG_TIMEOUT, timeoutText.getText().toString()));
-				break;
-			case SOFTWARE:
-			default:
-				showToast(APPLICATION_SHUT_DOWN_MESSAGE);
-				break;
-		}
+		unregisterButton.setEnabled(false);
+		if (applicationWatchdogRadioButton.isChecked())
+			showToast(APPLICATION_SHUT_DOWN_MESSAGE.replace(TAG_TIMEOUT, timeoutText.getText().toString()));
+		else
+			showToast(SYSTEM_REBOOT_MESSAGE.replace(TAG_TIMEOUT, timeoutText.getText().toString()));
+		running = false;
 	}
 	
 	/**
-	 * Changes the subscribed status text to display subscribed status.
+	 * Changes the registered status text to display registered status.
 	 * 
-	 * @param subscribed True if application is subscribed to watchdog service, false otherwise.
+	 * @param subscribed True if application is registered to watchdog service, false otherwise.
 	 */
-	private void setSubscribedStatus(boolean subscribed) {
+	private void setRegisteredStatus(boolean subscribed) {
 		if (subscribed) {
-			switch (getSelectedWatchdogType()) {
-				case HARDWARE:
-					subscribeStatusText.setText(R.string.subscribed_hw);
-					break;
-				case SOFTWARE:
-				default:
-					subscribeStatusText.setText(R.string.subscribed_sw);
-					break;
-			}
-			subscribeStatusText.setTextColor(getResources().getColor(R.color.light_green));
+			if (applicationWatchdogRadioButton.isChecked())
+				registerStatusText.setText(R.string.registered_application_watchdog);
+			else
+				registerStatusText.setText(R.string.registered_system_watchdog);
+			registerStatusText.setTextColor(getResources().getColor(R.color.light_green));
 		} else {
-			subscribeStatusText.setText(R.string.unsubscribed);
-			subscribeStatusText.setTextColor(getResources().getColor(R.color.light_red));
+			registerStatusText.setText(R.string.unregistered);
+			registerStatusText.setTextColor(getResources().getColor(R.color.light_red));
 		}
-	}
-
-	/**
-	 * Changes the hardware watchdog status text to display hardware watchdog status.
-	 * 
-	 * @param running True if hardware watchdog is running, false otherwise.
-	 */
-	private void setHardwareWatchdogStatus(boolean running) {
-		if (running) {
-			hardwareWatchdogStatusText.setText(R.string.running);
-			hardwareWatchdogStatusText.setTextColor(getResources().getColor(R.color.light_green));
-		} else {
-			hardwareWatchdogStatusText.setText(R.string.stopped);
-			hardwareWatchdogStatusText.setTextColor(getResources().getColor(R.color.light_red));
-		}
-	}
-
-	/**
-	 * Changes the enablement state of the hardware watchdog controls.
-	 * 
-	 * @param enable True to enable hardware watchdog controls, false to disable.
-	 */
-	private void enableHardwareWatchdogControls(boolean enable) {
-		initHardwareWatchdogButton.setEnabled(enable);
-		timeoutText.setEnabled(enable);
 	}
 	
 	/**
-	 * Changes the enablement state of the subscribe controls.
+	 * Changes the enablement state of the register controls.
 	 * 
-	 * @param enable True to enable subscribe controls, false to disable.
+	 * @param enable True to enable register controls, false to disable.
 	 */
-	private void enableSubscribeControls(boolean enable) {
-		subscribeButton.setEnabled(enable);
-		intervalText.setEnabled(enable);
-		unsubscribeButton.setEnabled(!enable);
-		hardwareWatchdogRadioButton.setEnabled(enable);
-		softwareWatchdogRadioButton.setEnabled(enable);
-
-		boolean swWatchdogSelected = getSelectedWatchdogType() == WatchdogType.SOFTWARE;
-		restartApplicationButton.setEnabled(enable && swWatchdogSelected);
+	private void enableRegisterControls(boolean enable) {
+		registerButton.setEnabled(enable);
+		timeoutText.setEnabled(enable);
+		if (!enable)
+			unregisterButton.setEnabled(applicationWatchdogRadioButton.isChecked());
+		else
+			unregisterButton.setEnabled(false);
+		systemWatchdogRadioButton.setEnabled(enable);
+		applicationWatchdogRadioButton.setEnabled(enable);
+		restartApplicationButton.setEnabled(enable && applicationWatchdogRadioButton.isChecked());
 	}
 	
 	/**
@@ -435,19 +319,7 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 		alertDialog.setIcon(R.drawable.help_image);
 		alertDialog.show();
 	}
-	
-	/**
-	 * Retrieves the selected watchdog type.
-	 * 
-	 * @return The selected watchdog type.
-	 */
-	private WatchdogType getSelectedWatchdogType() {
-		if (hardwareWatchdogRadioButton.isChecked())
-			return WatchdogType.HARDWARE;
-		else
-			return WatchdogType.SOFTWARE;
-	}
-	
+
 	/**
 	 * Generates the Pending Intent that will be used to restart the application on failure.
 	 * Used only for software watchdog service.
@@ -470,5 +342,30 @@ public class WatchdogSample extends Activity implements WatchdogStatusCallback {
 	 */
 	private String getStringResource(int resourceId) {
 		return getResources().getString(resourceId);
+	}
+
+	/**
+	 * Starts the refresh timeout thread with the configured watchdog service and timeout.
+	 *
+	 * @param isSystemWatchdog {@code true} if the watchdog service is system, {@code false} otherwise.
+	 * @param timeout Timeout to refresh the watchdog service.
+	 */
+	private  void startRefreshThread(final boolean isSystemWatchdog, final long timeout) {
+		running = true;
+		Thread refreshThread = new Thread() {
+			@Override
+			public void run() {
+				while (running) {
+					if (isSystemWatchdog)
+						watchdogManager.refreshSystemWatchdog();
+					else
+						watchdogManager.refreshApplicationWatchdog(WatchdogSample.this);
+					try {
+						Thread.sleep(timeout / 2);
+					} catch (InterruptedException e) {}
+				}
+			}
+		};
+		refreshThread.start();
 	}
 }

@@ -13,18 +13,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:text="@string/hardware_watchdog_service"
+        android:text="@string/watchdog_service"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <ImageButton
-        android:id="@+id/hw_wd_service_help_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="7dp"
-        android:layout_toEndOf="@+id/textView1"
-        android:background="@null"
-        android:src="@drawable/help_icon"
-        tools:ignore="ContentDescription" />
 
     <LinearLayout
         android:id="@+id/linearLayout1"
@@ -36,173 +26,94 @@
         android:orientation="horizontal" />
 
     <TextView
-        android:id="@+id/hw_wd_status_text"
+        android:id="@+id/register_status_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/linearLayout1"
         android:layout_below="@+id/linearLayout1"
         android:layout_marginTop="5dp"
-        android:text="@string/stopped" />
+        android:text="@string/unregistered" />
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/hw_wd_status_text"
-        android:layout_below="@+id/hw_wd_status_text"
         android:layout_marginTop="11dp"
         android:labelFor="@+id/timeout_text"
-        android:text="@string/timeout" />
+        android:text="@string/timeout"
+        android:layout_below="@+id/register_status_text" />
 
     <EditText
         android:id="@+id/timeout_text"
         android:layout_width="70dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/hw_wd_status_text"
         android:layout_marginStart="10dp"
         android:layout_marginTop="3dp"
         android:layout_toEndOf="@+id/textView2"
         android:ems="10"
         android:inputType="number"
         android:text="@string/default_timeout"
-        android:textColor="@drawable/edittext" />
+        android:textColor="@drawable/edittext"
+        android:layout_below="@+id/register_status_text" />
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/hw_wd_status_text"
         android:layout_marginStart="10dp"
         android:layout_marginTop="11dp"
         android:layout_toEndOf="@+id/timeout_text"
-        android:text="@string/seconds" />
-
-    <Button
-        android:id="@+id/init_hw_wd_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/timeout_text"
-        android:layout_marginTop="5dp"
-        android:text="@string/init_hw_wd" />
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/init_hw_wd_button"
-        android:layout_marginTop="10dp"
-        android:text="@string/service_subscription"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <ImageButton
-        android:id="@+id/watchdog_service_help_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/init_hw_wd_button"
-        android:layout_marginStart="7dp"
-        android:layout_marginTop="9dp"
-        android:layout_toEndOf="@+id/textView4"
-        android:background="@null"
-        android:src="@drawable/help_icon"
-        tools:ignore="ContentDescription" />
-
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@+id/textView4"
-        android:layout_marginTop="3dp"
-        android:background="@color/white"
-        android:orientation="horizontal" />
-
-    <TextView
-        android:id="@+id/subscribe_status_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/linearLayout2"
-        android:layout_marginTop="5dp"
-        android:text="@string/unsubscribed" />
-
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/subscribe_status_text"
-        android:layout_marginTop="11dp"
-        android:labelFor="@+id/interval_text"
-        android:text="@string/interval" />
-
-    <EditText
-        android:id="@+id/interval_text"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/subscribe_status_text"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="3dp"
-        android:layout_toEndOf="@+id/textView5"
-        android:ems="10"
-        android:inputType="number"
-        android:text="@string/default_interval"
-        android:textColor="@drawable/edittext" />
-
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/subscribe_status_text"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="11dp"
-        android:layout_toEndOf="@+id/interval_text"
-        android:text="@string/milliseconds" />
+        android:text="@string/milliseconds"
+        android:layout_below="@+id/register_status_text" />
 
     <TextView
         android:id="@+id/textView7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView5"
         android:layout_marginTop="11dp"
-        android:text="@string/type" />
+        android:text="@string/type"
+        android:layout_below="@+id/textView2" />
 
     <RadioButton
-        android:id="@+id/hw_wd_radio_button"
+        android:id="@+id/system_wd_radio_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView5"
         android:layout_marginTop="9dp"
         android:layout_toEndOf="@+id/textView7"
         android:checked="false"
-        android:text="@string/hardware_watchdog" />
+        android:text="@string/system_watchdog_service"
+        android:layout_below="@+id/textView2" />
 
     <RadioButton
-        android:id="@+id/sw_wd_radio_button"
+        android:id="@+id/application_wd_radio_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/hw_wd_radio_button"
+        android:layout_below="@+id/system_wd_radio_button"
         android:layout_marginTop="2dp"
         android:layout_toEndOf="@+id/textView7"
         android:checked="true"
-        android:text="@string/software_watchdog" />
+        android:text="@string/application_watchdog_service" />
 
     <ImageButton
-        android:id="@+id/hw_wd_help_button"
+        android:id="@+id/system_wd_help_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/hw_wd_radio_button"
+        android:layout_alignTop="@+id/system_wd_radio_button"
         android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
-        android:layout_toEndOf="@+id/hw_wd_radio_button"
+        android:layout_toEndOf="@+id/application_wd_radio_button"
         android:background="@null"
         android:src="@drawable/help_icon"
         tools:ignore="ContentDescription" />
 
     <ImageButton
-        android:id="@+id/sw_wd_help_button"
+        android:id="@+id/application_wd_help_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/hw_wd_help_button"
-        android:layout_alignTop="@+id/sw_wd_radio_button"
+        android:layout_alignStart="@+id/system_wd_help_button"
+        android:layout_alignTop="@+id/application_wd_radio_button"
         android:layout_marginTop="5dp"
-        android:layout_toEndOf="@+id/sw_wd_radio_button"
+        android:layout_toEndOf="@+id/application_wd_radio_button"
         android:background="@null"
         android:src="@drawable/help_icon"
         tools:ignore="ContentDescription" />
@@ -211,42 +122,44 @@
         android:id="@+id/restart_application_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/sw_wd_radio_button"
+        android:layout_below="@+id/application_wd_radio_button"
+        android:layout_alignLeft="@+id/application_wd_radio_button"
+        android:layout_marginLeft="25dip"
         android:text="@string/restart_application" />
 
     <Button
-        android:id="@+id/subscribe_button"
+        android:id="@+id/register_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/restart_application_button"
         android:layout_marginTop="5dp"
-        android:text="@string/subscribe" />
+        android:text="@string/register" />
 
     <Button
-        android:id="@+id/unsubscribe_button"
+        android:id="@+id/unregister_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/restart_application_button"
         android:layout_marginTop="5dp"
-        android:layout_toEndOf="@+id/subscribe_button"
+        android:layout_toEndOf="@+id/register_button"
         android:enabled="false"
-        android:text="@string/unsubscribe" />
+        android:text="@string/unregister" />
 
     <LinearLayout
         android:id="@+id/linearLayout3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/linearLayout2"
-        android:layout_marginStart="50dp"
-        android:layout_toEndOf="@+id/textView6"
-        android:orientation="vertical">
+        android:layout_marginStart="30dp"
+        android:orientation="vertical"
+        android:layout_below="@+id/textView1"
+        android:layout_toRightOf="@+id/system_wd_help_button">
 
         <TextView
             android:id="@+id/report_failure_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="25dp"
             android:text="@string/report_failure"
             android:textColor="@color/white"
             android:textSize="18sp" />
@@ -255,7 +168,7 @@
             android:id="@+id/report_failure_button"
             android:layout_width="120dp"
             android:layout_height="120dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="0dp"
             android:scaleType="centerInside"
             android:src="@drawable/failure_image"
             tools:ignore="ContentDescription" />
