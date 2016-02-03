@@ -14,7 +14,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.digi.android.watchdog;
+package com.digi.android.sample.watchdog;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -24,7 +24,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.watchdog.WatchdogManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -32,6 +31,9 @@ import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.digi.android.watchdog.ApplicationWatchdogManager;
+import com.digi.android.watchdog.SystemWatchdogManager;
 
 /**
  * Watchdog sample application.
@@ -44,7 +46,7 @@ import android.widget.Toast;
  * included in the example directory.</p>
  */
 
-public class WatchdogSample extends Activity {
+public class WatchdogSampleActivity extends Activity {
 	
 	// Constants.
 	private final static String TAG_TIMEOUT = "@@TIMEOUT@@";
@@ -71,7 +73,9 @@ public class WatchdogSample extends Activity {
 
 	private ImageButton reportFailureButton;
 	
-	private WatchdogManager watchdogManager;
+	private SystemWatchdogManager systemWatchdogManager;
+
+	private ApplicationWatchdogManager applicationWatchdogManager;
 
 	private boolean running = false;
 	
@@ -79,8 +83,9 @@ public class WatchdogSample extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		// Retrieve Watchdog Manager service.
-		watchdogManager = (WatchdogManager) getSystemService(WATCHDOG_SERVICE);
+		// Create watchdog managers.
+		systemWatchdogManager = new SystemWatchdogManager(this);
+		applicationWatchdogManager = new ApplicationWatchdogManager(this);
 		// Initialize UI.
 	 	initializeUIComponents();
 		// Enable controls.
@@ -175,13 +180,13 @@ public class WatchdogSample extends Activity {
 			long realTimeout;
 			if (applicationWatchdogRadioButton.isChecked()) {
 				if (restartApplicationButton.isChecked())
-					watchdogManager.registerApplication(this, timeout, generatePendingIntent());
+					applicationWatchdogManager.init(timeout, generatePendingIntent());
 				else
-					watchdogManager.registerApplication(this, timeout, null);
+					applicationWatchdogManager.init(timeout, null);
 				realTimeout = timeout;
 				showToast("Registered to application watchdog with a timeout of " + realTimeout + " milliseconds.");
 			} else {
-				realTimeout = watchdogManager.initSystemWatchdog(timeout);
+				realTimeout = systemWatchdogManager.init(timeout);
 				showToast("Registered to system watchdog with a timeout of " + realTimeout + " milliseconds.");
 			}
 			startRefreshThread(systemWatchdogRadioButton.isChecked(), realTimeout);
@@ -200,7 +205,7 @@ public class WatchdogSample extends Activity {
 	 * Handles what happens when the unregister button is pressed.
 	 */
 	private void handleUnregisterButtonPressed() {
-		watchdogManager.unregisterApplication(this);
+		applicationWatchdogManager.stop();
 		running = false;
 		enableRegisterControls(true);
 		setRegisteredStatus(false);
@@ -328,7 +333,7 @@ public class WatchdogSample extends Activity {
 	 */
 	private PendingIntent generatePendingIntent() {
 		// Generate an intent to start this activity again as a new task.
-		Intent intent = new Intent(this, WatchdogSample.class);
+		Intent intent = new Intent(this, WatchdogSampleActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		// Build pending intent.
 		return PendingIntent.getActivity(this, 0, intent, 0);
@@ -357,9 +362,9 @@ public class WatchdogSample extends Activity {
 			public void run() {
 				while (running) {
 					if (isSystemWatchdog)
-						watchdogManager.refreshSystemWatchdog();
+						systemWatchdogManager.refresh();
 					else
-						watchdogManager.refreshApplicationWatchdog(WatchdogSample.this);
+						applicationWatchdogManager.refresh();
 					try {
 						Thread.sleep(timeout / 2);
 					} catch (InterruptedException e) {}
