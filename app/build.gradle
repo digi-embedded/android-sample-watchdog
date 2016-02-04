@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 22
+    compileSdkVersion 'Digi International:Digi SDK Add-On:22'
     buildToolsVersion '23.0.2'
     defaultConfig {
         applicationId 'com.digi.android.watchdog'
