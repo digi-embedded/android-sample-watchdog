@@ -123,8 +123,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/application_wd_radio_button"
-        android:layout_alignLeft="@+id/application_wd_radio_button"
-        android:layout_marginLeft="25dip"
+        android:layout_alignStart="@+id/application_wd_radio_button"
+        android:layout_marginStart="25dip"
         android:text="@string/restart_application" />
 
     <Button
@@ -152,7 +152,7 @@
         android:layout_marginStart="30dp"
         android:orientation="vertical"
         android:layout_below="@+id/textView1"
-        android:layout_toRightOf="@+id/system_wd_help_button">
+        android:layout_toEndOf="@+id/system_wd_help_button">
 
         <TextView
             android:id="@+id/report_failure_text"

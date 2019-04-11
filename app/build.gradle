@@ -16,3 +16,7 @@ android {
     productFlavors {
     }
 }
+
+dependencies {
+    implementation 'com.android.support:support-v4:22.2.1'
+}

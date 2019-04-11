@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2014-2016, Digi International Inc. <support@digi.com>
+/*
+ * Copyright (c) 2014-2019, Digi International Inc. <support@digi.com>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -22,6 +22,8 @@ import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Process;
+import android.support.v4.content.res.ResourcesCompat;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -104,7 +106,7 @@ public class WatchdogSampleActivity extends Activity {
 	 */
 	private void initializeUIComponents() {
 		// Initialize subscribe button.
-		registerButton = (Button)findViewById(R.id.register_button);
+		registerButton = findViewById(R.id.register_button);
 		registerButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -112,7 +114,7 @@ public class WatchdogSampleActivity extends Activity {
 			}
 		});
 		// Initialize unregister button.
-		unregisterButton = (Button)findViewById(R.id.unregister_button);
+		unregisterButton = findViewById(R.id.unregister_button);
 		unregisterButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -120,7 +122,7 @@ public class WatchdogSampleActivity extends Activity {
 			}
 		});
 		// Initialize system watchdog radio button.
-		systemWatchdogRadioButton = (RadioButton)findViewById(R.id.system_wd_radio_button);
+		systemWatchdogRadioButton = findViewById(R.id.system_wd_radio_button);
 		systemWatchdogRadioButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -128,7 +130,7 @@ public class WatchdogSampleActivity extends Activity {
 			}
 		});
 		// Initialize application watchdog radio button.
-		applicationWatchdogRadioButton = (RadioButton)findViewById(R.id.application_wd_radio_button);
+		applicationWatchdogRadioButton = findViewById(R.id.application_wd_radio_button);
 		applicationWatchdogRadioButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -136,7 +138,7 @@ public class WatchdogSampleActivity extends Activity {
 			}
 		});
 		// System Watchdog Help button.
-		ImageButton hardwareWatchdogHelpButton = (ImageButton) findViewById(R.id.system_wd_help_button);
+		ImageButton hardwareWatchdogHelpButton = findViewById(R.id.system_wd_help_button);
 		hardwareWatchdogHelpButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -145,7 +147,7 @@ public class WatchdogSampleActivity extends Activity {
 			}
 		});
 		// Application Watchdog Help button.
-		ImageButton softwareWatchdogHelpButton = (ImageButton) findViewById(R.id.application_wd_help_button);
+		ImageButton softwareWatchdogHelpButton = findViewById(R.id.application_wd_help_button);
 		softwareWatchdogHelpButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -154,7 +156,7 @@ public class WatchdogSampleActivity extends Activity {
 			}
 		});
 		// Report failure button.
-		reportFailureButton = (ImageButton)findViewById(R.id.report_failure_button);
+		reportFailureButton = findViewById(R.id.report_failure_button);
 		reportFailureButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -162,13 +164,13 @@ public class WatchdogSampleActivity extends Activity {
 			}
 		});
 		// Initialize restart application check box.
-		restartApplicationButton = (CheckBox)findViewById(R.id.restart_application_button);
+		restartApplicationButton = findViewById(R.id.restart_application_button);
 		// Initialize timeout text.
-		timeoutText = (EditText)findViewById(R.id.timeout_text);
+		timeoutText = findViewById(R.id.timeout_text);
 		// Initialize registered status text.
-		registerStatusText = (TextView)findViewById(R.id.register_status_text);
+		registerStatusText = findViewById(R.id.register_status_text);
 		// Report Failure text.
-		reportFailureText = (TextView)findViewById(R.id.report_failure_text);
+		reportFailureText = findViewById(R.id.report_failure_text);
 	}
 	
 	/**
@@ -287,10 +289,10 @@ public class WatchdogSampleActivity extends Activity {
 		reportFailureButton.setEnabled(enable);
 		if (enable) {
 			reportFailureText.setTextColor(getResources().getColor(R.color.white));
-			reportFailureButton.setImageDrawable(getResources().getDrawable(R.drawable.failure_image));
+			reportFailureButton.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.failure_image, null));
 		} else {
 			reportFailureText.setTextColor(getResources().getColor(R.color.light_grey));
-			reportFailureButton.setImageDrawable(getResources().getDrawable(R.drawable.failure_image_disabled));
+			reportFailureButton.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.failure_image_disabled, null));
 		}
 	}
 	
