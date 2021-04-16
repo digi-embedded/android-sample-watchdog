@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2019, Digi International Inc. <support@digi.com>
+ * Copyright (c) 2014-2021, Digi International Inc. <support@digi.com>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -22,7 +22,6 @@ import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Process;
 import android.support.v4.content.res.ResourcesCompat;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -47,25 +46,25 @@ import com.digi.android.watchdog.SystemWatchdogManager;
  * <p>For a complete description on the example, refer to the 'README.md' file
  * included in the example directory.</p>
  */
-
 public class WatchdogSampleActivity extends Activity {
-	
+
 	// Constants.
 	private final static String TAG_TIMEOUT = "@@TIMEOUT@@";
 	private final static String ERROR_INVALID_TIMEOUT = "ERROR: Invalid timeout.";
 	private final static String ERROR_REGISTERING = "ERROR: Could not register to watchdog service > ";
-	private final static String SYSTEM_REBOOT_MESSAGE = "Application will stop refreshing the watchdog now. System will reboot in " +
-			"less than " + TAG_TIMEOUT + " milliseconds...";
-	private final static String APPLICATION_SHUT_DOWN_MESSAGE = "Application will stop refreshing the watchdog now. System will " +
-			"stop the application in less than " + TAG_TIMEOUT + " milliseconds...";
-	
+	private final static String SYSTEM_REBOOT_MESSAGE = "Application will stop refreshing the "
+			+ "watchdog now. System will reboot in less than " + TAG_TIMEOUT + " milliseconds...";
+	private final static String APPLICATION_SHUT_DOWN_MESSAGE = "Application will stop refreshing "
+			+ "the watchdog now. System will stop the application in less than "
+			+ TAG_TIMEOUT + " milliseconds...";
+
 	// Variables.
 	private Button registerButton;
 	private Button unregisterButton;
-	
+
 	private RadioButton systemWatchdogRadioButton;
 	private RadioButton applicationWatchdogRadioButton;
-	
+
 	private CheckBox restartApplicationButton;
 
 	private EditText timeoutText;
@@ -74,13 +73,13 @@ public class WatchdogSampleActivity extends Activity {
 	private TextView reportFailureText;
 
 	private ImageButton reportFailureButton;
-	
+
 	private SystemWatchdogManager systemWatchdogManager;
 
 	private ApplicationWatchdogManager applicationWatchdogManager;
 
 	private boolean running = false;
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -172,13 +171,13 @@ public class WatchdogSampleActivity extends Activity {
 		// Report Failure text.
 		reportFailureText = findViewById(R.id.report_failure_text);
 	}
-	
+
 	/**
 	 * Handles what happens when the subscribe button is pressed.
 	 */
 	private void handleRegisterButtonPressed() {
 		try {
-			long timeout = Long.valueOf(timeoutText.getText().toString());
+			long timeout = Long.parseLong(timeoutText.getText().toString());
 			long realTimeout;
 			if (applicationWatchdogRadioButton.isChecked()) {
 				if (restartApplicationButton.isChecked())
@@ -213,7 +212,7 @@ public class WatchdogSampleActivity extends Activity {
 		setRegisteredStatus(false);
 		enableReportFailureControls(false);
 	}
-	
+
 	/**
 	 * Handles what happens when the system watchdog service radio button is pressed.
 	 */
@@ -222,7 +221,7 @@ public class WatchdogSampleActivity extends Activity {
 		applicationWatchdogRadioButton.setChecked(!systemWatchdog);
 		restartApplicationButton.setEnabled(!systemWatchdog);
 	}
-	
+
 	/**
 	 * Handles what happens when the applications watchdog service radio button is pressed.
 	 */
@@ -231,7 +230,7 @@ public class WatchdogSampleActivity extends Activity {
 		systemWatchdogRadioButton.setChecked(!applicationWatchdog);
 		restartApplicationButton.setEnabled(applicationWatchdog);
 	}
-	
+
 	/**
 	 * Handles what happens when the report failure button is pressed.
 	 */
@@ -244,7 +243,7 @@ public class WatchdogSampleActivity extends Activity {
 			showToast(SYSTEM_REBOOT_MESSAGE.replace(TAG_TIMEOUT, timeoutText.getText().toString()));
 		running = false;
 	}
-	
+
 	/**
 	 * Changes the registered status text to display registered status.
 	 * 
@@ -262,7 +261,7 @@ public class WatchdogSampleActivity extends Activity {
 			registerStatusText.setTextColor(getResources().getColor(R.color.light_red));
 		}
 	}
-	
+
 	/**
 	 * Changes the enablement state of the register controls.
 	 * 
@@ -279,7 +278,7 @@ public class WatchdogSampleActivity extends Activity {
 		applicationWatchdogRadioButton.setEnabled(enable);
 		restartApplicationButton.setEnabled(enable && applicationWatchdogRadioButton.isChecked());
 	}
-	
+
 	/**
 	 * Changes the enablement state of the report failure controls.
 	 * 
@@ -295,7 +294,7 @@ public class WatchdogSampleActivity extends Activity {
 			reportFailureButton.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.failure_image_disabled, null));
 		}
 	}
-	
+
 	/**
 	 * Displays a toast with the given message.
 	 * 
@@ -304,7 +303,7 @@ public class WatchdogSampleActivity extends Activity {
 	private void showToast(String message) {
 		Toast.makeText(this, message, Toast.LENGTH_LONG).show();
 	}
-	
+
 	/**
 	 * Displays a popup dialog with the given title and message.
 	 * 
@@ -340,7 +339,7 @@ public class WatchdogSampleActivity extends Activity {
 		// Build pending intent.
 		return PendingIntent.getActivity(this, 0, intent, 0);
 	}
-	
+
 	/**
 	 * Retrieves the given resource ID string.
 	 * 
@@ -369,7 +368,7 @@ public class WatchdogSampleActivity extends Activity {
 						applicationWatchdogManager.refresh();
 					try {
 						Thread.sleep(timeout / 2);
-					} catch (InterruptedException e) {}
+					} catch (InterruptedException ignored) {}
 				}
 			}
 		};
