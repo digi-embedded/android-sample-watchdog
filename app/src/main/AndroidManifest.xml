@@ -5,6 +5,7 @@
     android:versionName="1.0">
 
     <uses-permission android:name="com.digi.android.permission.WATCHDOG" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <application
         android:allowBackup="true"

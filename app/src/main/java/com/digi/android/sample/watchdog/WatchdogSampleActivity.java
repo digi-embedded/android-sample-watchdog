@@ -21,7 +21,10 @@ import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -32,6 +35,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.digi.android.watchdog.ApplicationWatchdogManager;
@@ -58,6 +62,8 @@ public class WatchdogSampleActivity extends Activity {
 	private final static String APPLICATION_SHUT_DOWN_MESSAGE = "Application will stop refreshing "
 			+ "the watchdog now. System will stop the application in less than "
 			+ TAG_TIMEOUT + " milliseconds...";
+
+	private final static int ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 66;
 
 	// Variables.
 	private Button registerButton;
@@ -93,12 +99,37 @@ public class WatchdogSampleActivity extends Activity {
 		// Enable controls.
 		enableRegisterControls(true);
 		enableReportFailureControls(false);
+		// Check overlay permissions to re-launch application.
+		checkPermission();
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
 		running = false;
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE) {
+			if (Build.VERSION.SDK_INT >= 29 && !Settings.canDrawOverlays(this)) {
+				// If the permissions is not granted by the user, display an error and end the activity.
+				showToast("Error: Application requires \"Display over other apps\" permission to work.");
+				finish();
+			}
+		}
+	}
+
+	/**
+	 * Verifies that the application has been granted the "Display over other apps" permission. If
+	 * not, the user is directed to the permissions widow.
+	 */
+	public void checkPermission() {
+		if (Build.VERSION.SDK_INT >= 29 && !Settings.canDrawOverlays(this)) {
+			Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
+			startActivityForResult(intent, ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
+		}
 	}
 
 	/**
