@@ -44,9 +44,10 @@ import com.digi.android.watchdog.SystemWatchdogManager;
 /**
  * Watchdog sample application.
  *
- * <p>This example demonstrates the usage of the Watchdog API. The application allows users to
- * register to the watchdog service choosing between the system watchdog or the application
- * watchdog services. Finally, users can force application failures anytime using a button.</p>
+ * <p>This example demonstrates the usage of the Watchdog API. The application
+ * allows users to register to the watchdog service choosing between the
+ * system watchdog or the application watchdog.
+ * Users can force application failures anytime using a button.</p>
  *
  * <p>For a complete description on the example, refer to the 'README.md' file
  * included in the example directory.</p>

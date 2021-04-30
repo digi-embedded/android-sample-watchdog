@@ -2,7 +2,7 @@ Watchdog Sample Application
 ===========================
 
 This example demonstrates the usage of the Watchdog API. The sample allows
-you to interact with the watchdog service by registering the application either 
+you to interact with the watchdog service by registering the application either
 to the system or the application watchdog services and report application failure
 at any time.
 
@@ -11,8 +11,8 @@ Demo requirements
 
 To run this example you need:
 
-* One compatible device to host the application.
-* A USB connection between the device and the host PC in order to transfer and
+* A compatible development board to host the application.
+* A USB connection between the board and the host PC in order to transfer and
   launch the application.
 
 Demo setup
@@ -20,13 +20,13 @@ Demo setup
 
 Make sure the hardware is set up correctly:
 
-1. The device is powered on.
-2. The device is connected directly to the PC by the micro USB cable.
+1. The development board is powered on.
+2. The board is connected directly to the PC by the micro USB cable.
 
 Demo run
 --------
 
-The example is already configured, so all you need to do is to build and launch 
+The example is already configured, so all you need to do is to build and launch
 the project.
 
 While it is running, a form is displayed to register the application
@@ -35,23 +35,23 @@ From this form you can also configure the timeout of the watchdog service.
 
 Click **Register** to register the application to the selected watchdog service.
 
-Once the application is registered, it will automatically refresh the watchdog 
+Once the application is registered, it automatically refreshes the watchdog
 periodically to avoid the watchdog timeout to expire.
 
-Click **Report Failure** to stop refreshing the watchdog and let the service 
+Click **Report Failure** to stop refreshing the watchdog and let the service
 execute the corresponding actions:
 
-* If the application was registered to the system watchdog service and a failure 
+* If the application was registered to the system watchdog service and a failure
   is reported, the system reboots as soon as the configured timeout elapses.
-* If the application was registered to the application watchdog service and a 
+* If the application was registered to the application watchdog service and a
   failure is reported, the system stops the application as soon as the configured
   timeout elapses. At this point, if **Restart Application** option was selected,
-  the application automatically starts again, if not, you have to restart the 
+  the application automatically starts again, if not, you have to restart the
   application manually.
 
 Click **Unregister** to unregister application from the application watchdog service.
-It is not possible to unregister the application from the system watchdog service 
-as once it starts, it cannot be stopped.
+It is not possible to unregister the application from the system watchdog service,
+once it starts, it cannot be stopped.
 
 Finally, click on any question mark near each section to obtain more information
 regarding the watchdog service.
@@ -62,6 +62,7 @@ Compatible with
 * ConnectCore 6 SBC
 * ConnectCore 6 SBC v3
 * ConnectCore 8X SBC Pro
+* ConnectCore 8M Mini Development Kit
 
 License
 -------
