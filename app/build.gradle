@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 'Digi International:Digi SDK Add-On for Embedded:28'
+    compileSdkVersion 'Digi International:Digi SDK Add-On for Embedded:30'
     buildToolsVersion '30.0.3'
     defaultConfig {
         applicationId 'com.digi.android.watchdog'
         minSdkVersion 22
-        targetSdkVersion 28
+        targetSdkVersion 30
     }
     buildTypes {
         release {
