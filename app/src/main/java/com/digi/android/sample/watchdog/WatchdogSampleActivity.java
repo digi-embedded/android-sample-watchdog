@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2021, Digi International Inc. <support@digi.com>
+ * Copyright (c) 2014-2025, Digi International Inc. <support@digi.com>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -19,14 +19,11 @@ package com.digi.android.sample.watchdog;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -36,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.digi.android.watchdog.ApplicationWatchdogManager;
@@ -124,7 +122,7 @@ public class WatchdogSampleActivity extends Activity {
 
 	/**
 	 * Verifies that the application has been granted the "Display over other apps" permission. If
-	 * not, the user is directed to the permissions widow.
+	 * not, the user is directed to the permissions window.
 	 */
 	public void checkPermission() {
 		if (Build.VERSION.SDK_INT >= 29 && !Settings.canDrawOverlays(this)) {
@@ -139,62 +137,27 @@ public class WatchdogSampleActivity extends Activity {
 	private void initializeUIComponents() {
 		// Initialize subscribe button.
 		registerButton = findViewById(R.id.register_button);
-		registerButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				handleRegisterButtonPressed();
-			}
-		});
+		registerButton.setOnClickListener(v -> handleRegisterButtonPressed());
 		// Initialize unregister button.
 		unregisterButton = findViewById(R.id.unregister_button);
-		unregisterButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				handleUnregisterButtonPressed();
-			}
-		});
+		unregisterButton.setOnClickListener(v -> handleUnregisterButtonPressed());
 		// Initialize system watchdog radio button.
 		systemWatchdogRadioButton = findViewById(R.id.system_wd_radio_button);
-		systemWatchdogRadioButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				handleSystemWatchdogRadioButtonPressed();
-			}
-		});
+		systemWatchdogRadioButton.setOnClickListener(v -> handleSystemWatchdogRadioButtonPressed());
 		// Initialize application watchdog radio button.
 		applicationWatchdogRadioButton = findViewById(R.id.application_wd_radio_button);
-		applicationWatchdogRadioButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				handleApplicationWatchdogRadioButtonPressed();
-			}
-		});
+		applicationWatchdogRadioButton.setOnClickListener(v -> handleApplicationWatchdogRadioButtonPressed());
 		// System Watchdog Help button.
 		ImageButton hardwareWatchdogHelpButton = findViewById(R.id.system_wd_help_button);
-		hardwareWatchdogHelpButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				showPopupDialog(getStringResource(R.string.system_watchdog_service),
-						getStringResource(R.string.system_watchdog_description));
-			}
-		});
+		hardwareWatchdogHelpButton.setOnClickListener(v -> showPopupDialog(getStringResource(R.string.system_watchdog_service),
+				getStringResource(R.string.system_watchdog_description)));
 		// Application Watchdog Help button.
 		ImageButton softwareWatchdogHelpButton = findViewById(R.id.application_wd_help_button);
-		softwareWatchdogHelpButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				showPopupDialog(getStringResource(R.string.application_watchdog_service),
-						getStringResource(R.string.application_watchdog_description));
-			}
-		});
+		softwareWatchdogHelpButton.setOnClickListener(v -> showPopupDialog(getStringResource(R.string.application_watchdog_service),
+				getStringResource(R.string.application_watchdog_description)));
 		// Report failure button.
 		reportFailureButton = findViewById(R.id.report_failure_button);
-		reportFailureButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				handleReportFailureButtonPressed();
-			}
-		});
+		reportFailureButton.setOnClickListener(v -> handleReportFailureButtonPressed());
 		// Initialize restart application check box.
 		restartApplicationButton = findViewById(R.id.restart_application_button);
 		// Initialize timeout text.
@@ -288,10 +251,10 @@ public class WatchdogSampleActivity extends Activity {
 				registerStatusText.setText(R.string.registered_application_watchdog);
 			else
 				registerStatusText.setText(R.string.registered_system_watchdog);
-			registerStatusText.setTextColor(getResources().getColor(R.color.light_green));
+			registerStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.light_green));
 		} else {
 			registerStatusText.setText(R.string.unregistered);
-			registerStatusText.setTextColor(getResources().getColor(R.color.light_red));
+			registerStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.light_red));
 		}
 	}
 
@@ -320,10 +283,10 @@ public class WatchdogSampleActivity extends Activity {
 	private void enableReportFailureControls(boolean enable) {
 		reportFailureButton.setEnabled(enable);
 		if (enable) {
-			reportFailureText.setTextColor(getResources().getColor(R.color.white));
+			reportFailureText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.white));
 			reportFailureButton.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.failure_image, null));
 		} else {
-			reportFailureText.setTextColor(getResources().getColor(R.color.light_grey));
+			reportFailureText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.light_grey));
 			reportFailureButton.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.failure_image_disabled, null));
 		}
 	}
@@ -348,12 +311,7 @@ public class WatchdogSampleActivity extends Activity {
 		alertDialog.setTitle(title);
 		alertDialog.setMessage(message);
 		alertDialog.setCancelable(true);
-		alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				alertDialog.dismiss();
-			}
-		});
+		alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK", (dialog, which) -> alertDialog.dismiss());
 		// Set the Icon for the Dialog
 		alertDialog.setIcon(R.drawable.help_image);
 		alertDialog.show();
@@ -370,7 +328,7 @@ public class WatchdogSampleActivity extends Activity {
 		Intent intent = new Intent(this, WatchdogSampleActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		// Build pending intent.
-		return PendingIntent.getActivity(this, 0, intent, 0);
+		return PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 	}
 
 	/**
